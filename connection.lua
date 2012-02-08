@@ -82,7 +82,7 @@ function ArachniRPCConnection:receive_data()
         self.buffer = self.buffer .. (self.socket:receive( 1 ) or '' )
 
         -- once we have enough data to figure out the size of the whole 
-        -- responce move deeper
+        -- response move deeper
         if self.buffer:len() >= 4 then
 
             -- calc the size, but only once
@@ -117,7 +117,7 @@ function ArachniRPCConnection:get_size( payload )
 end
 
 --
--- Prepares a payload for transmition by packing it with its size.
+-- Prepares a payload for transmission by packing it with its size.
 --
 function ArachniRPCConnection:pack_with_size( payload )
     local bin = ''
