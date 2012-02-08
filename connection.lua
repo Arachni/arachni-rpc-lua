@@ -96,9 +96,15 @@ end
 --
 function ArachniRPCConnection:get_size( payload )
     local size = ""
+
+    -- first 4 chars are the size packed as
+    -- null-padded, 32-bit unsigned, network (big-endian) byte order
+    -- so we need to convert them from binary to proper ASCII...
     for i=1, 4 do
         size = size .. self.buffer:sub( i, i ):byte( 1,1 )
     end
+
+    -- ...and convert the ASCII string to a usable integer.
     return tonumber( size )
 end
 
@@ -107,12 +113,18 @@ end
 --
 function ArachniRPCConnection:pack_with_size( payload )
     local bin = ''
+
+    -- get the size as a binary string
+    -- (not sure if this is a good way to do this)
     bin = string.char( payload:len() )
 
+    -- null-pad the remaining space
     for i = 1, 4 - bin:len() do
         bin = bin .. string.char( 0x0 )
     end
 
+    -- prefix the payload with its size packed as
+    -- 4 char, null-padded, 32-bit unsigned, network (big-endian) byte order
     return string.reverse( bin ) .. payload
 end
 
