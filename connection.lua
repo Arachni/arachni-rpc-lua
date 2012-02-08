@@ -56,12 +56,28 @@ function ArachniRPCConnection:receive_object()
     return yaml.load( serialized )
 end
 
+
+--
+-- Pay no attention to the man behind the curtain,
+-- i.e. don't count on the following functions.
+--
+
 --
 -- Waits until a serialized object has been received and returns
 -- the serialized version.
 --
 function ArachniRPCConnection:receive_data()
     while true  do
+
+        -- Ridiculously inefficient, we can't keep receiving
+        -- 1 byte at a time.
+        --
+        -- However, this won't work any other way without patching
+        -- the LuaSec lib or getting dirty with the original FD.
+        --
+        -- I'll update this to use the raw FD down the line
+        -- for more efficient buffering though.
+        --
         self.buffer = self.buffer .. (self.socket:receive( 1 ) or '' )
 
         if self.buffer:len() >= 4 then
