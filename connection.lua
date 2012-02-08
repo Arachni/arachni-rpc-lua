@@ -67,6 +67,7 @@ end
 -- the serialized version.
 --
 function ArachniRPCConnection:receive_data()
+    local size = 0
     while true  do
 
         -- Ridiculously inefficient, we can't keep receiving
@@ -84,8 +85,10 @@ function ArachniRPCConnection:receive_data()
         -- responce move deeper
         if self.buffer:len() >= 4 then
 
-            -- calc the size
-            size = self:get_size( self.buffer )
+            -- calc the size, but only once
+            if size == 0 then
+                size = self:get_size( self.buffer )
+            end
 
             -- once we've buffered the whole response, return it
             if self.buffer:len() >= 4 + size then
