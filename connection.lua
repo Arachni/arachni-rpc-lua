@@ -8,7 +8,7 @@ require 'yaml'
 -- Takes care of:
 --   * SSL
 --   * Buffering
---   * Object serialization and transmitionn
+--   * Object serialization and transmission
 --
 ArachniRPCConnection = {}
 
