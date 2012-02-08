@@ -80,9 +80,14 @@ function ArachniRPCConnection:receive_data()
         --
         self.buffer = self.buffer .. (self.socket:receive( 1 ) or '' )
 
+        -- once we have enough data to figure out the size of the whole 
+        -- responce move deeper
         if self.buffer:len() >= 4 then
 
+            -- calc the size
             size = self:get_size( self.buffer )
+
+            -- once we've buffered the whole response, return it
             if self.buffer:len() >= 4 + size then
                 serialized_obj = self.buffer:sub( 5, self.buffer:len() )
                 return serialized_obj
