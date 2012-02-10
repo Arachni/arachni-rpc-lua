@@ -68,36 +68,15 @@ end
 -- the serialized version.
 --
 function ArachniRPCConnection:receive_data()
-    local size = 0
-    while true  do
-
-        -- Ridiculously inefficient, we can't keep receiving
-        -- 1 byte at a time.
-        --
-        -- However, this won't work any other way without patching
-        -- the LuaSec lib or getting dirty with the original FD.
-        --
-        -- I'll update this to use the raw FD down the line
-        -- for more efficient buffering though.
-        --
-        self.buffer = self.buffer .. (self.socket:receive( 1 ) or '' )
-
-        -- once we have enough data to figure out the size of the whole 
-        -- response move deeper
-        if self.buffer:len() >= 4 then
-
-            -- calc the size, but only once
-            if size == 0 then
-                size = self:get_size( self.buffer )
-            end
-
-            -- once we've buffered the whole response, return it
-            if self.buffer:len() >= 4 + size then
-                serialized_obj = self.buffer:sub( 5, self.buffer:len() )
-                return serialized_obj
-            end
-        end
+    -- wait until the header, which is basically the size
+    -- of the response, arrives
+    header = nil
+    while not header do
+        header = self.socket:receive( 4 )
     end
+
+    -- wait until the whole response arrives
+    return self.socket:receive( self:get_size( header ) )
 end
 
 --
@@ -110,7 +89,7 @@ function ArachniRPCConnection:get_size( payload )
     -- null-padded, 32-bit unsigned, network (big-endian) byte order
     -- so we need to convert them from binary to proper ASCII...
     for i=1, 4 do
-        size = size .. self.buffer:sub( i, i ):byte( 1,1 )
+        size = size .. payload:byte( i, i )
     end
 
     -- ...and convert the ASCII string to a usable integer.
