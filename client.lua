@@ -36,8 +36,13 @@ function ArachniRPCClient:call( method, args )
          args = args,
          token = self.token
      })
-     obj = conn:receive_object()
+     res = conn:receive_object()
      conn:close()
-     return obj
+
+     if type( res.obj ) == 'table' and res.obj.exception then
+         error( res.obj.exception )
+     else
+         return res.obj
+     end
 end
 
