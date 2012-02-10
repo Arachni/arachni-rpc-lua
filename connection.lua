@@ -23,12 +23,13 @@ function ArachniRPCConnection:new( opts )
     self.__index = self
 
     -- create SSL socket
-    socket = socket.tcp()
-    socket:connect( opts.host, opts.port )
-    socket = ssl.wrap( socket, { mode = 'client', protocol = 'tlsv1'} )
-    socket:dohandshake()
+    conn = socket.tcp()
 
-    self.socket = socket
+    conn:connect( opts.host, opts.port )
+    conn = ssl.wrap( conn, { mode = 'client', protocol = 'tlsv1'} )
+    conn:dohandshake()
+
+    self.socket = conn
 
     -- this will be our receive buffer
     self.buffer = ''

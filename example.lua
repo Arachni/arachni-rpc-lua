@@ -1,6 +1,40 @@
 require 'client'
 
-rpc = ArachniRPCClient:new( { host = 'localhost', port = 7331, token = nil } )
---print( rpc:call( 'bench.foo', { 'test' } ).obj )
-print( rpc:call( 'dispatcher.dispatch' ).obj.url )
+dispatcher = ArachniRPCClient:new( { host = 'localhost', port = 7331 } )
+instance_info = dispatcher:call( 'dispatcher.dispatch' )
 
+instance = ArachniRPCClient:new({
+    host  = 'localhost',
+    port  = instance_info.port,
+    token = instance_info.token
+})
+
+opts = {
+    url = 'http://demo.testfire.net',
+    audit_links = true,
+    audit_forms = true,
+    audit_cookies = true,
+    link_count_limit = 1
+}
+
+instance:call( 'modules.load', { 'xss' } )
+instance:call( 'opts.set', opts )
+instance:call( 'framework.run' )
+
+local clock = os.clock
+function sleep( n )
+    local t0 = clock()
+    while clock() - t0 <= n do end
+end
+
+while instance:call( 'framework.busy?' ) do
+    print( '.' ) 
+    sleep( 1 )
+end
+
+print 'Done!'
+
+print( yaml.dump( instance:call( 'framework.report' ).issues ) )
+
+instance:call( 'service.shutdown' )
+print( 'Instance has been shut down.' )

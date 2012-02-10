@@ -33,7 +33,7 @@ function ArachniRPCClient:call( method, args )
      conn = ArachniRPCConnection:new( { host = self.host, port = self.port } )
      conn:send_object({
          message = method,
-         args = args,
+         args = {args},
          token = self.token
      })
      res = conn:receive_object()
