@@ -33,7 +33,11 @@ end
 -- @return  Object
 ---
 function ArachniRPCClient:call( method, args )
-    conn = ArachniRPCConnection:new( opts )
+    -- make a copy of the opts in self before passing them on
+    c_opts = {}
+    for k, v in pairs( self ) do c_opts[k] = v end
+
+    conn = ArachniRPCConnection:new( c_opts )
     conn:send_object({
         message = method,
         args = {args},
