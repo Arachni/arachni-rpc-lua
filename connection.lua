@@ -25,8 +25,11 @@ function ArachniRPCConnection:new( opts )
     -- create SSL socket
     conn = socket.tcp()
 
+    opts.mode = 'client'
+    opts.protocol = 'tlsv1'
+
     conn:connect( opts.host, opts.port )
-    conn = ssl.wrap( conn, { mode = 'client', protocol = 'tlsv1'} )
+    conn = ssl.wrap( conn, opts )
     conn:dohandshake()
 
     self.socket = conn

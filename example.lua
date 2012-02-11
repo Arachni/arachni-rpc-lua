@@ -27,14 +27,17 @@ function sleep( n )
     while clock() - t0 <= n do end
 end
 
+io.write( 'Scanning' )
 while instance:call( 'framework.busy?' ) do
-    print( '.' ) 
+    io.write( '.' )
+    io.flush()
     sleep( 1 )
 end
 
-print 'Done!'
+print( 'Done!' )
 
+print 'Discovered issues:'
 print( yaml.dump( instance:call( 'framework.report' ).issues ) )
 
 instance:call( 'service.shutdown' )
-print( 'Instance has been shut down.' )
+print( '[Instance has been shut down.]' )
