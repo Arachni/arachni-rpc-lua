@@ -21,17 +21,14 @@ instance:call( 'modules.load', { 'xss' } )
 instance:call( 'opts.set', opts )
 instance:call( 'framework.run' )
 
-local clock = os.clock
-function sleep( n )
-    local t0 = clock()
-    while clock() - t0 <= n do end
-end
-
 io.write( 'Scanning' )
 while instance:call( 'framework.busy?' ) do
     io.write( '.' )
     io.flush()
-    sleep( 1 )
+    
+    -- sleep for a sec
+    t0 = os.clock()
+    while os.clock() - t0 <= 1 do end
 end
 
 print( 'Done!' )
@@ -41,3 +38,4 @@ print( yaml.dump( instance:call( 'framework.report' ).issues ) )
 
 instance:call( 'service.shutdown' )
 print( '[Instance has been shut down.]' )
+
