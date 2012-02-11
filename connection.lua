@@ -16,6 +16,9 @@ ArachniRPCConnection = {}
 -- opts:
 --   * host
 --   * port
+--   * key = SSL key in PEM format
+--   * certificate = SSL cert in PEM format
+--   * cafile = CA file in PEM format
 --
 function ArachniRPCConnection:new( opts )
     opts = opts or {}
@@ -27,6 +30,10 @@ function ArachniRPCConnection:new( opts )
 
     opts.mode = 'client'
     opts.protocol = 'tlsv1'
+
+    if opts.key and opts.certificate and opts.cafile then
+        opts.verify = { "peer", "fail_if_no_peer_cert" }
+    end
 
     conn:connect( opts.host, opts.port )
     conn = ssl.wrap( conn, opts )

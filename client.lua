@@ -12,6 +12,9 @@ ArachniRPCClient = {}
 --   * host = remote host address -- REQUIRED
 --   * port = port number -- REQUIRED
 --   * token = authentication token -- OPTIONAL
+--   * key = SSL key in PEM format
+--   * certificate = SSL cert in PEM format
+--   * cafile = CA file in PEM format
 --
 function ArachniRPCClient:new( opts )
     opts = opts or {}
@@ -30,19 +33,19 @@ end
 -- @return  Object
 ---
 function ArachniRPCClient:call( method, args )
-     conn = ArachniRPCConnection:new( { host = self.host, port = self.port } )
-     conn:send_object({
-         message = method,
-         args = {args},
-         token = self.token
-     })
-     res = conn:receive_object()
-     conn:close()
+    conn = ArachniRPCConnection:new( opts )
+    conn:send_object({
+        message = method,
+        args = {args},
+        token = self.token
+    })
+    res = conn:receive_object()
+    conn:close()
 
-     if type( res.obj ) == 'table' and res.obj.exception then
-         error( res.obj.exception )
-     else
-         return res.obj
-     end
+    if type( res.obj ) == 'table' and res.obj.exception then
+        error( res.obj.exception )
+    else
+        return res.obj
+    end
 end
 
