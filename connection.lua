@@ -84,7 +84,7 @@ function ArachniRPCConnection:receive_data()
     while not header do
         header = self.socket:receive( 4 )
     end
-
+    
     -- wait until the whole response arrives
     return self.socket:receive( self:get_size( header ) )
 end
@@ -93,17 +93,16 @@ end
 -- Unpacks the received payload and returns its size. 
 --
 function ArachniRPCConnection:get_size( payload )
-    local size = ""
-
     -- first 4 chars are the size packed as
     -- null-padded, 32-bit unsigned, network (big-endian) byte order
     -- so we need to convert them from binary to proper ASCII...
-    for i=1, 4 do
-        size = size .. payload:byte( i, i )
+    local size = 4
+    local val = payload:sub( 1, size )
+    local value = 0
+    for j= 1, size do
+        value = value * 256 + val:byte( j )
     end
-
-    -- ...and convert the ASCII string to a usable integer.
-    return tonumber( size )
+    return unpack( {value} )
 end
 
 --
