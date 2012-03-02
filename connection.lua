@@ -111,13 +111,12 @@ end
 function ArachniRPCConnection:pack_with_size( payload )
     local bin = ''
 
-    -- get the size as a binary string
-    -- (not sure if this is a good way to do this)
-    bin = string.char( payload:len() )
+    print( payload )
 
-    -- null-pad the remaining space
-    for i = 1, 4 - bin:len() do
-        bin = bin .. string.char( 0x0 )
+    length = payload:len()
+    for i = 1, 4 do
+        bin = bin .. string.char( length % 256 )
+        length = math.floor( length / 256 )
     end
 
     -- prefix the payload with its size packed as
