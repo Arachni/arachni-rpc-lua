@@ -1,4 +1,5 @@
-require "./connection" 
+--require "/home/zapotek/workspace/arachni-rpc-lua/connection" 
+require "connection" 
 
 --
 -- Arachni RPC Client
