@@ -1,4 +1,4 @@
-# Defunkt
+# Defunct
 
 This project is no longer maintained nor used by Arachni, the [Arachni-RPC](http://github.com/Arachni/arachni-rpc) specification has changed as of v1.0.
 
